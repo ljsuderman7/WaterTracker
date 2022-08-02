@@ -1,7 +1,13 @@
 package ca.lsuderman.watertracker;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.work.ExistingPeriodicWorkPolicy;
+import androidx.work.OneTimeWorkRequest;
+import androidx.work.PeriodicWorkRequest;
+import androidx.work.WorkManager;
+import androidx.work.WorkRequest;
 
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
@@ -16,7 +22,11 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
+import java.sql.Time;
+import java.time.LocalTime;
+import java.util.Calendar;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -24,19 +34,50 @@ public class MainActivity extends AppCompatActivity {
     private ImageButton btnCup1, btnCup2;
     private LinearLayout llCups;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        // Insert new cups (debug)
+        int hourOfTheDay = 2;
+        int repeatInterval = 1;
 
-//        for (int i = 0; i < 8; i++){
-//            ((WaterDB) getApplication()).addCup();
-//        }
+        Calendar desiredTime = Calendar.getInstance();
+        desiredTime.set(Calendar.HOUR_OF_DAY, hourOfTheDay);
+        desiredTime.set(Calendar.MINUTE, 0);
+        desiredTime.set(Calendar.SECOND, 0);
 
-        //REMOVE LATER
+        Calendar currentTime = Calendar.getInstance();
+
+        long delay = currentTime.getTimeInMillis() - desiredTime.getTimeInMillis();
+
+        Toast toast = Toast.makeText(getApplicationContext(), String.valueOf(delay), Toast.LENGTH_LONG);
+        toast.show();
+
+        PeriodicWorkRequest request =
+                new PeriodicWorkRequest.Builder(EverydayWorker.class,
+                        repeatInterval,
+                        TimeUnit.DAYS)
+                        /*.setInitialDelay(delay, TimeUnit.MILLISECONDS)*/
+                        .build();
+
+        //TODO: Make a better tag
+        WorkManager.getInstance().enqueueUniquePeriodicWork("reset_cups_periodic",
+                ExistingPeriodicWorkPolicy.REPLACE,
+                request);
+
+//        PeriodicWorkRequest request = new PeriodicWorkRequest.Builder(EverydayWorker.class,
+//                repeatInterval,
+//                TimeUnit.DAYS)
+//                .setInitialDelay(delay);
+
+        // runs during the last 15 minutes of every hour
+//        WorkRequest saveRequest =
+//                new PeriodicWorkRequest.Builder(SaveImageToFileWorker.class,
+//                        1, TimeUnit.HOURS,
+//                        15, TimeUnit.MINUTES)
+//                        .build();
+
         //region Cup Buttons
 
         btn1 = findViewById(R.id.btn1);
@@ -50,6 +91,8 @@ public class MainActivity extends AppCompatActivity {
 
         setCups();
 
+        Toast notCurrentCup = Toast.makeText(getApplicationContext(), "Not Current Cup", Toast.LENGTH_LONG);
+
         btn1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -61,72 +104,87 @@ public class MainActivity extends AppCompatActivity {
         btn2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                btn2.setEnabled(false);
-                ((WaterDB) getApplication()).finishCup(2);
+                if (isCurrentCup(btn1)){
+                    btn2.setEnabled(false);
+                    ((WaterDB) getApplication()).finishCup(2);
+                } else {
+                    notCurrentCup.show();
+                }
             }
         });
 
         btn3.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                btn3.setEnabled(false);
-                ((WaterDB) getApplication()).finishCup(3);
+                if (isCurrentCup(btn2)){
+                    btn3.setEnabled(false);
+                    ((WaterDB) getApplication()).finishCup(3);
+                } else {
+                    notCurrentCup.show();
+                }
             }
         });
 
         btn4.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                btn4.setEnabled(false);
-                ((WaterDB) getApplication()).finishCup(4);
+                if (isCurrentCup(btn3)){
+                    btn4.setEnabled(false);
+                    ((WaterDB) getApplication()).finishCup(4);
+                } else {
+                    notCurrentCup.show();
+                }
             }
         });
 
         btn5.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                btn5.setEnabled(false);
-                ((WaterDB) getApplication()).finishCup(5);
+                if (isCurrentCup(btn4)){
+                    btn5.setEnabled(false);
+                    ((WaterDB) getApplication()).finishCup(5);
+                } else {
+                    notCurrentCup.show();
+                }
             }
         });
 
         btn6.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                btn6.setEnabled(false);
-                ((WaterDB) getApplication()).finishCup(6);
+                if (isCurrentCup(btn5)){
+                    btn6.setEnabled(false);
+                    ((WaterDB) getApplication()).finishCup(6);
+                } else {
+                    notCurrentCup.show();
+                }
             }
         });
 
         btn7.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                btn7.setEnabled(false);
-                ((WaterDB) getApplication()).finishCup(7);
+                if (isCurrentCup(btn6)){
+                    btn7.setEnabled(false);
+                    ((WaterDB) getApplication()).finishCup(7);
+                } else {
+                    notCurrentCup.show();
+                }
             }
         });
 
         btn8.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                btn8.setEnabled(false);
-                ((WaterDB) getApplication()).finishCup(8);
-            }
-        });
-        //endregion
-
-        // Reset Button
-        btnReset = findViewById(R.id.btnReset);
-        btnReset.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                for (int i = 1; i <= 8; i++) {
-                    ((WaterDB) getApplication()).resetCup(i);
-                    setCups();
+                if (isCurrentCup(btn7)){
+                    btn8.setEnabled(false);
+                    ((WaterDB) getApplication()).finishCup(8);
+                } else {
+                    notCurrentCup.show();
                 }
             }
         });
-
+        //endregion
 
         //region Image Cup Buttons
         llCups = findViewById(R.id.llCups);
@@ -188,6 +246,18 @@ public class MainActivity extends AppCompatActivity {
 
         //endregion
 
+
+        // Reset Button
+        btnReset = findViewById(R.id.btnReset);
+        btnReset.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                for (int i = 1; i <= 8; i++) {
+                    ((WaterDB) getApplication()).resetCup(i);
+                    setCups();
+                }
+            }
+        });
     }
 
     private void setCups() {
@@ -261,5 +331,13 @@ public class MainActivity extends AppCompatActivity {
             }
         }
 
+    }
+
+    private boolean isCurrentCup(Button button){
+        boolean currentCup = false;
+        if(!button.isEnabled()){
+            currentCup = true;
+        }
+        return currentCup;
     }
 }
