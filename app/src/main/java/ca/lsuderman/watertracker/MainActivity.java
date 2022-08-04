@@ -39,47 +39,34 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        int hourOfTheDay = 2;
+        int cupResetHour = 2;
         int repeatInterval = 1;
+        final long MILLIS_IN_A_DAY = 86400000;
 
+        // Calendar instances for both the current time and desired time for button/cup reset (2AM)
         Calendar desiredTime = Calendar.getInstance();
-        desiredTime.set(Calendar.HOUR_OF_DAY, hourOfTheDay);
+        desiredTime.set(Calendar.HOUR_OF_DAY, cupResetHour);
         desiredTime.set(Calendar.MINUTE, 0);
         desiredTime.set(Calendar.SECOND, 0);
-
         Calendar currentTime = Calendar.getInstance();
 
-        long delay = currentTime.getTimeInMillis() - desiredTime.getTimeInMillis();
+        // Calculates the amount of time (milliseconds) until 2AM from current time
+        long delay = MILLIS_IN_A_DAY - (currentTime.getTimeInMillis() - desiredTime.getTimeInMillis());
 
-        Toast toast = Toast.makeText(getApplicationContext(), String.valueOf(delay), Toast.LENGTH_LONG);
-        toast.show();
-
+        // Creates a PeriodicWorkRequest that will repeat everyday, and is initially delayed until 2AM
         PeriodicWorkRequest request =
-                new PeriodicWorkRequest.Builder(EverydayWorker.class,
-                        repeatInterval,
-                        TimeUnit.DAYS)
-                        /*.setInitialDelay(delay, TimeUnit.MILLISECONDS)*/
+                new PeriodicWorkRequest.Builder(EverydayWorker.class, repeatInterval, TimeUnit.DAYS)
+                        .setInitialDelay(delay, TimeUnit.MILLISECONDS)
                         .build();
 
-        //TODO: Make a better tag
+        // Puts request in the queue
         WorkManager.getInstance().enqueueUniquePeriodicWork("reset_cups_periodic",
                 ExistingPeriodicWorkPolicy.REPLACE,
                 request);
 
-//        PeriodicWorkRequest request = new PeriodicWorkRequest.Builder(EverydayWorker.class,
-//                repeatInterval,
-//                TimeUnit.DAYS)
-//                .setInitialDelay(delay);
-
-        // runs during the last 15 minutes of every hour
-//        WorkRequest saveRequest =
-//                new PeriodicWorkRequest.Builder(SaveImageToFileWorker.class,
-//                        1, TimeUnit.HOURS,
-//                        15, TimeUnit.MINUTES)
-//                        .build();
-
         //region Cup Buttons
 
+        // Initialize buttons
         btn1 = findViewById(R.id.btn1);
         btn2 = findViewById(R.id.btn2);
         btn3 = findViewById(R.id.btn3);
@@ -89,10 +76,12 @@ public class MainActivity extends AppCompatActivity {
         btn7 = findViewById(R.id.btn7);
         btn8 = findViewById(R.id.btn8);
 
+        // Checks which cups should be "finished" (enabled or disabled)
         setCups();
 
+        //Button Listeners: checks if it is the next cup in line, and if it is it allows it to be clicks.
+        // If not then it displays Toast. Not needed for the first button
         Toast notCurrentCup = Toast.makeText(getApplicationContext(), "Not Current Cup", Toast.LENGTH_LONG);
-
         btn1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

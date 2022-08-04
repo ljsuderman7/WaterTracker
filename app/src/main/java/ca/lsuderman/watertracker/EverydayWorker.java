@@ -27,7 +27,14 @@ public class EverydayWorker extends Worker {
         //TODO: Check for correct amount of cups finished by predetermined time interval
         // - Create PeriodicWorker for time interval
 
-        Log.d("Did it work?", "WORKED!!!");
+        // runs during the last 15 minutes of every hour
+//        WorkRequest saveRequest =
+//                new PeriodicWorkRequest.Builder(SaveImageToFileWorker.class,
+//                        1, TimeUnit.HOURS,
+//                        15, TimeUnit.MINUTES)
+//                        .build();
+
+        Log.d("Testing EverydayWorker Initial Delay", "SUCCESS");
         return Result.success();
     }
 }
