@@ -28,6 +28,8 @@ android {
 }
 
 dependencies {
+    implementation 'androidx.test:monitor:1.4.0'
+    implementation 'androidx.preference:preference:1.1.1'
     def work_version = "2.7.1"
     def core_version = "1.6.0"
 
@@ -42,4 +44,6 @@ dependencies {
     implementation "androidx.core:core:$core_version"
 
     implementation 'androidx.hilt:hilt-work:1.0.0'
+
+    androidTestImplementation "androidx.work:work-testing:2.5.0"
 }

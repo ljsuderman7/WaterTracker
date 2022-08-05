@@ -8,6 +8,7 @@ import androidx.work.WorkManager;
 import androidx.work.WorkRequest;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
@@ -30,32 +31,34 @@ import java.util.concurrent.TimeUnit;
 
 public class MainActivity extends AppCompatActivity {
 
-    private Button btn1, btn2, btn3, btn4, btn5, btn6, btn7, btn8, btnReset;
+    private Button btn1, btn2, btn3, btn4, btn5, btn6, btn7, btn8, btnReset, btnPreferences;
     private ImageButton btnCup1, btnCup2;
     private LinearLayout llCups;
+    private SharedPreferences sharedPreferences;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        int cupResetHour = 2;
-        int repeatInterval = 1;
-        final long MILLIS_IN_A_DAY = 86400000;
+//        int cupResetHour = 2;
+//        final long MILLIS_IN_A_DAY = 86400000;
+//
+//        // Calendar instances for both the current time and desired time for button/cup reset (2AM)
+//        Calendar desiredTime = Calendar.getInstance();
+//        desiredTime.set(Calendar.HOUR_OF_DAY, cupResetHour);
+//        desiredTime.set(Calendar.MINUTE, 0);
+//        desiredTime.set(Calendar.SECOND, 0);
+//        Calendar currentTime = Calendar.getInstance();
+//
+//        // Calculates the amount of time (milliseconds) until 2AM from current time
+//        long delay = MILLIS_IN_A_DAY - (currentTime.getTimeInMillis() - desiredTime.getTimeInMillis());
 
-        // Calendar instances for both the current time and desired time for button/cup reset (2AM)
-        Calendar desiredTime = Calendar.getInstance();
-        desiredTime.set(Calendar.HOUR_OF_DAY, cupResetHour);
-        desiredTime.set(Calendar.MINUTE, 0);
-        desiredTime.set(Calendar.SECOND, 0);
-        Calendar currentTime = Calendar.getInstance();
-
-        // Calculates the amount of time (milliseconds) until 2AM from current time
-        long delay = MILLIS_IN_A_DAY - (currentTime.getTimeInMillis() - desiredTime.getTimeInMillis());
+        long delay = Utilities.getInitialDelay(2);
 
         // Creates a PeriodicWorkRequest that will repeat everyday, and is initially delayed until 2AM
         PeriodicWorkRequest request =
-                new PeriodicWorkRequest.Builder(EverydayWorker.class, repeatInterval, TimeUnit.DAYS)
+                new PeriodicWorkRequest.Builder(EverydayWorker.class, 1, TimeUnit.DAYS)
                         .setInitialDelay(delay, TimeUnit.MILLISECONDS)
                         .build();
 
@@ -245,6 +248,15 @@ public class MainActivity extends AppCompatActivity {
                     ((WaterDB) getApplication()).resetCup(i);
                     setCups();
                 }
+            }
+        });
+        
+        // Preferences Button
+        btnPreferences = findViewById(R.id.btnPreferences);
+        btnPreferences.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(getApplicationContext(), SettingsActivity.class));
             }
         });
     }

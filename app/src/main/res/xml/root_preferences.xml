@@ -1,0 +1,21 @@
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <PreferenceCategory app:title="Usual Waking Hours">
+        <ListPreference
+            android:defaultValue="1"
+            android:entries="@array/times_entries"
+            android:entryValues="@array/times_value"
+            android:key="wakeUp"
+            android:title="@string/wake_up"
+            app:useSimpleSummaryProvider="true" />
+        <ListPreference
+            android:defaultValue="1"
+            android:entries="@array/times_entries"
+            android:entryValues="@array/times_value"
+            android:key="bedtime"
+            android:title="@string/bedtime"
+            app:useSimpleSummaryProvider="true" />
+    </PreferenceCategory>
+
+</PreferenceScreen>

@@ -1,10 +1,13 @@
 package ca.lsuderman.watertracker;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
+import androidx.work.ExistingPeriodicWorkPolicy;
 import androidx.work.OneTimeWorkRequest;
+import androidx.work.PeriodicWorkRequest;
 import androidx.work.WorkManager;
 import androidx.work.Worker;
 import androidx.work.WorkerParameters;
@@ -13,6 +16,9 @@ import java.util.Calendar;
 import java.util.concurrent.TimeUnit;
 
 public class EverydayWorker extends Worker {
+
+    private SharedPreferences sharedPreferences;
+
     public EverydayWorker (
             @NonNull Context context,
             @NonNull WorkerParameters params){
@@ -24,15 +30,22 @@ public class EverydayWorker extends Worker {
     public Result doWork() {
         //TODO: Reset All Cups
 
-        //TODO: Check for correct amount of cups finished by predetermined time interval
-        // - Create PeriodicWorker for time interval
+        int wakeUpTime = sharedPreferences.getInt("WakeUp", 8);
+        int bedtime = sharedPreferences.getInt("bedtime", 23);
 
-        // runs during the last 15 minutes of every hour
-//        WorkRequest saveRequest =
-//                new PeriodicWorkRequest.Builder(SaveImageToFileWorker.class,
-//                        1, TimeUnit.HOURS,
-//                        15, TimeUnit.MINUTES)
-//                        .build();
+        int hoursAwake = bedtime - wakeUpTime;
+        int timeBetweenCups = hoursAwake / 8; //TODO: Change to amount user chooses
+
+        long delay = Utilities.getInitialDelay(wakeUpTime);
+
+        PeriodicWorkRequest request =
+                new PeriodicWorkRequest.Builder(NextCupNotificationWorker.class, timeBetweenCups, TimeUnit.HOURS)
+                        .setInitialDelay(delay, TimeUnit.MILLISECONDS)
+                        .build();
+
+        WorkManager.getInstance().enqueueUniquePeriodicWork("next_cup_notification",
+                ExistingPeriodicWorkPolicy.REPLACE,
+                request);
 
         Log.d("Testing EverydayWorker Initial Delay", "SUCCESS");
         return Result.success();

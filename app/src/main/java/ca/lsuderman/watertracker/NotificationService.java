@@ -10,18 +10,12 @@ public class NotificationService extends Service {
 
     @Override
     public IBinder onBind(Intent intent) {
-        // TODO: Return the communication channel to the service.
         //throw new UnsupportedOperationException("Not yet implemented");
         return null;
     }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        // TODO: Notification Stuff
-
-        // Reset at start of every day
-
-        // Check for correct number of cups finished per predetermined number of hours
 
         return START_STICKY;
     }

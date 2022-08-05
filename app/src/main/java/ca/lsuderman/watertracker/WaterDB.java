@@ -56,7 +56,27 @@ public class WaterDB extends Application {
 
 
     //Get Cup
+    public Cup getCup(int id){
+        SQLiteDatabase db = helper.getWritableDatabase();
+        Cursor cursor = db.rawQuery("SELECT * FROM tbl_cups WHERE CupID = " + id, null);
 
+        if (cursor != null){
+            cursor.moveToFirst();
+        }
+
+        Cup cup = new Cup();
+        cup.setCupID(cursor.getInt(0));
+        // set isDone based on if it is 0 (True), or 1 (false)
+        int isDoneInt = cursor.getInt(1);
+        if(isDoneInt == 0){
+            cup.setIsDone(true);
+        }
+        else{
+            cup.setIsDone(false);
+        }
+        cursor.close();
+        return cup;
+    }
 
     //Get All Cups
     public List<Cup> getAllCups(){
