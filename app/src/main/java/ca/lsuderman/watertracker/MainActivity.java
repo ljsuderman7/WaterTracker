@@ -41,6 +41,10 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+//        Toast toast = Toast.makeText(getApplicationContext(), "", Toast.LENGTH_LONG);
+//        toast.show();
+
+
 //        int cupResetHour = 2;
 //        final long MILLIS_IN_A_DAY = 86400000;
 //
@@ -190,17 +194,7 @@ public class MainActivity extends AppCompatActivity {
         llCups.post(new Runnable() {
             @Override
             public void run() {
-                int layoutWidth = llCups.getWidth();
-
-                int width = llCups.getWidth() / 8; //change to number of cups from 8...
-
-                int divider = getDrawable(R.drawable.cup).getIntrinsicWidth() / width;
-
-                int height = getDrawable(R.drawable.cup).getIntrinsicWidth() / divider;
-
-                Bitmap bmp;
-                bmp = BitmapFactory.decodeResource(getResources(), R.drawable.cup);
-                bmp = Bitmap.createScaledBitmap(bmp, width, height, true);
+                Bitmap bmp = createCupBitmap(false);
 
 
                 btnCup1.setImageBitmap(bmp);
@@ -209,30 +203,26 @@ public class MainActivity extends AppCompatActivity {
                 btnCup2.setImageBitmap(bmp);
                 btnCup2.setBackgroundColor(Color.TRANSPARENT);
 
-//                Log.d("Layout Width",String.valueOf(llCups.getWidth()));
-//                Log.d("Button Width",String.valueOf(btnCup1.getWidth()));
-//                Log.d("Divi",String.valueOf(width));
-                //Log.d("Layout Width",String.valueOf(width));
             }
         });
-
-//        Toast toast = Toast.makeText(getApplicationContext(), String.valueOf(), Toast.LENGTH_LONG);
-//        toast.show();
-
-
-//        Bitmap bmp;
-//        bmp = BitmapFactory.decodeResource(getResources(), R.drawable.cup);
-//        bmp = Bitmap.createScaledBitmap(bmp, width, height, true);
-//
-//        btnCup1 = findViewById(R.id.btnCup1);
-//
-//        btnCup1.setImageBitmap(bmp);
-//        btnCup1.setBackgroundColor(Color.TRANSPARENT);
 
         btnCup1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                btnCup1.setBackgroundResource(R.drawable.finished_cup);
+                changeCupImage(btnCup1);
+                ((WaterDB) getApplication()).finishCup(1);
+            }
+        });
+
+        btnCup2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (isCurrentCup(1)) {
+                    changeCupImage(btnCup2);
+                    ((WaterDB) getApplication()).finishCup(2);
+                } else {
+                    notCurrentCup.show();
+                }
             }
         });
 
@@ -271,56 +261,56 @@ public class MainActivity extends AppCompatActivity {
             for (Cup cup : cups) {
                 switch (cup.getCupID()) {
                     case 1:
-                        if (!cup.getIsDone()) {
+                        if (cup.getIsDone()) {
                             btn1.setEnabled(false);
                         } else {
                             btn1.setEnabled(true);
                         }
                         break;
                     case 2:
-                        if (!cup.getIsDone()) {
+                        if (cup.getIsDone()) {
                             btn2.setEnabled(false);
                         } else {
                             btn2.setEnabled(true);
                         }
                         break;
                     case 3:
-                        if (!cup.getIsDone()) {
+                        if (cup.getIsDone()) {
                             btn3.setEnabled(false);
                         } else {
                             btn3.setEnabled(true);
                         }
                         break;
                     case 4:
-                        if (!cup.getIsDone()) {
+                        if (cup.getIsDone()) {
                             btn4.setEnabled(false);
                         } else {
                             btn4.setEnabled(true);
                         }
                         break;
                     case 5:
-                        if (!cup.getIsDone()) {
+                        if (cup.getIsDone()) {
                             btn5.setEnabled(false);
                         } else {
                             btn5.setEnabled(true);
                         }
                         break;
                     case 6:
-                        if (!cup.getIsDone()) {
+                        if (cup.getIsDone()) {
                             btn6.setEnabled(false);
                         } else {
                             btn6.setEnabled(true);
                         }
                         break;
                     case 7:
-                        if (!cup.getIsDone()) {
+                        if (cup.getIsDone()) {
                             btn7.setEnabled(false);
                         } else {
                             btn7.setEnabled(true);
                         }
                         break;
                     case 8:
-                        if (!cup.getIsDone()) {
+                        if (cup.getIsDone()) {
                             btn8.setEnabled(false);
                         } else {
                             btn8.setEnabled(true);
@@ -338,5 +328,50 @@ public class MainActivity extends AppCompatActivity {
             currentCup = true;
         }
         return currentCup;
+    }
+
+    private boolean isCurrentCup(int cupId){
+        boolean currentCup = false;
+        Cup cup = ((WaterDB) getApplication()).getCup(cupId);
+        if(cup.getIsDone()){
+            currentCup = true;
+        }
+        return currentCup;
+    }
+
+    private void changeCupImage(ImageButton button){
+        llCups.post(new Runnable() {
+            @Override
+            public void run() {
+                Bitmap bmp = createCupBitmap(true);
+
+                button.setImageBitmap(bmp);
+                button.setBackgroundColor(Color.TRANSPARENT);
+            }
+        });
+    }
+
+    private Bitmap createCupBitmap(boolean isFinished){
+        Bitmap bmp;
+
+        int layoutWidth = llCups.getWidth();
+
+        int width = layoutWidth / 8; //change to number of cups from 8...
+
+        double divider = (double)getDrawable(R.drawable.cup).getIntrinsicWidth() / width;
+
+        double height = getDrawable(R.drawable.cup).getIntrinsicHeight() / divider;
+
+        if (isFinished) {
+            bmp = BitmapFactory.decodeResource(getResources(), R.drawable.finished_cup);
+        } else {
+            bmp = BitmapFactory.decodeResource(getResources(), R.drawable.cup);
+        }
+        bmp = Bitmap.createScaledBitmap(bmp, width, (int)height, true);
+
+        Log.d("Bitmap Width", String.valueOf(bmp.getWidth()));
+        Log.d("Bitmap Height", String.valueOf(bmp.getHeight()));
+
+        return bmp;
     }
 }

@@ -73,7 +73,7 @@ public class WaterDB extends Application {
         cup.setCupID(cursor.getInt(0));
         // set isDone based on if it is 0 (True), or 1 (false)
         int isDoneInt = cursor.getInt(1);
-        if(isDoneInt == 0){
+        if(isDoneInt == 1){
             cup.setIsDone(true);
         }
         else{
@@ -96,7 +96,7 @@ public class WaterDB extends Application {
 
                 // set isDone based on if it is 0 (True), or 1 (false)
                 int isDoneInt = cursor.getInt(1);
-                if(isDoneInt == 0){
+                if(isDoneInt == 1){
                     cup.setIsDone(true);
                 }
                 else{
