@@ -31,8 +31,11 @@ public class EverydayWorker extends Worker {
         //TODO: Reset All Cups
         //((WaterDB) getApplicationContext()).resetAllCups();
 
-        int wakeUpTime = sharedPreferences.getInt("WakeUp", 8);
-        int bedtime = sharedPreferences.getInt("bedtime", 23);
+//        int wakeUpTime = sharedPreferences.getInt("WakeUp", 8);
+//        int bedtime = sharedPreferences.getInt("bedtime", 23);
+
+        int wakeUpTime = 8;
+        int bedtime = 23;
 
         int hoursAwake = bedtime - wakeUpTime;
         int timeBetweenCups = hoursAwake / 8; //TODO: Change to amount user chooses

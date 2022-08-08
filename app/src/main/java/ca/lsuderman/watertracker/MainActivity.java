@@ -249,14 +249,14 @@ public class MainActivity extends AppCompatActivity {
             }
         });
         
-        // Preferences Button
-        btnPreferences = findViewById(R.id.btnPreferences);
-        btnPreferences.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                startActivity(new Intent(getApplicationContext(), SettingsActivity.class));
-            }
-        });
+//        // Preferences Button
+//        btnPreferences = findViewById(R.id.btnPreferences);
+//        btnPreferences.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                startActivity(new Intent(getApplicationContext(), SettingsActivity.class));
+//            }
+//        });
     }
 
     private void setCups() {
