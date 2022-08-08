@@ -244,10 +244,8 @@ public class MainActivity extends AppCompatActivity {
         btnReset.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                for (int i = 1; i <= 8; i++) {
-                    ((WaterDB) getApplication()).resetCup(i);
-                    setCups();
-                }
+                ((WaterDB) getApplicationContext()).resetAllCups();
+                setCups();
             }
         });
         

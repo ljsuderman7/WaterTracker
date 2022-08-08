@@ -29,6 +29,7 @@ public class EverydayWorker extends Worker {
     @Override
     public Result doWork() {
         //TODO: Reset All Cups
+        //((WaterDB) getApplicationContext()).resetAllCups();
 
         int wakeUpTime = sharedPreferences.getInt("WakeUp", 8);
         int bedtime = sharedPreferences.getInt("bedtime", 23);

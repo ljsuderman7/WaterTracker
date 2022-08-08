@@ -53,7 +53,12 @@ public class WaterDB extends Application {
     }
 
     // Reset All Cups
-
+    public void resetAllCups(){
+        SQLiteDatabase db = helper.getWritableDatabase();
+        for (int i = 1; i <= 8; i++){ // TODO: Change from 8 to number set by user
+            db.execSQL("UPDATE tbl_cups SET IsDone = 0 WHERE CupID = " + i);
+        }
+    }
 
     //Get Cup
     public Cup getCup(int id){
