@@ -32,7 +32,7 @@ import java.util.concurrent.TimeUnit;
 public class MainActivity extends AppCompatActivity {
 
     private Button btn1, btn2, btn3, btn4, btn5, btn6, btn7, btn8, btnReset, btnPreferences;
-    private ImageButton btnCup1, btnCup2;
+    private ImageButton btnCup1, btnCup2, btnCup3, btnCup4, btnCup5, btnCup6, btnCup7, btnCup8;
     private LinearLayout llCups;
     private SharedPreferences sharedPreferences;
 
@@ -43,20 +43,6 @@ public class MainActivity extends AppCompatActivity {
 
 //        Toast toast = Toast.makeText(getApplicationContext(), "", Toast.LENGTH_LONG);
 //        toast.show();
-
-
-//        int cupResetHour = 2;
-//        final long MILLIS_IN_A_DAY = 86400000;
-//
-//        // Calendar instances for both the current time and desired time for button/cup reset (2AM)
-//        Calendar desiredTime = Calendar.getInstance();
-//        desiredTime.set(Calendar.HOUR_OF_DAY, cupResetHour);
-//        desiredTime.set(Calendar.MINUTE, 0);
-//        desiredTime.set(Calendar.SECOND, 0);
-//        Calendar currentTime = Calendar.getInstance();
-//
-//        // Calculates the amount of time (milliseconds) until 2AM from current time
-//        long delay = MILLIS_IN_A_DAY - (currentTime.getTimeInMillis() - desiredTime.getTimeInMillis());
 
         long delay = Utilities.getInitialDelay(2);
 
@@ -71,138 +57,22 @@ public class MainActivity extends AppCompatActivity {
                 ExistingPeriodicWorkPolicy.REPLACE,
                 request);
 
-        //region Cup Buttons
-
-        // Initialize buttons
-        btn1 = findViewById(R.id.btn1);
-        btn2 = findViewById(R.id.btn2);
-        btn3 = findViewById(R.id.btn3);
-        btn4 = findViewById(R.id.btn4);
-        btn5 = findViewById(R.id.btn5);
-        btn6 = findViewById(R.id.btn6);
-        btn7 = findViewById(R.id.btn7);
-        btn8 = findViewById(R.id.btn8);
-
-        // Checks which cups should be "finished" (enabled or disabled)
-        setCups();
-
-        //Button Listeners: checks if it is the next cup in line, and if it is it allows it to be clicks.
-        // If not then it displays Toast. Not needed for the first button
-        Toast notCurrentCup = Toast.makeText(getApplicationContext(), "Not Current Cup", Toast.LENGTH_LONG);
-        btn1.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                btn1.setEnabled(false);
-                ((WaterDB) getApplication()).finishCup(1);
-            }
-        });
-
-        btn2.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (isCurrentCup(btn1)){
-                    btn2.setEnabled(false);
-                    ((WaterDB) getApplication()).finishCup(2);
-                } else {
-                    notCurrentCup.show();
-                }
-            }
-        });
-
-        btn3.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (isCurrentCup(btn2)){
-                    btn3.setEnabled(false);
-                    ((WaterDB) getApplication()).finishCup(3);
-                } else {
-                    notCurrentCup.show();
-                }
-            }
-        });
-
-        btn4.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (isCurrentCup(btn3)){
-                    btn4.setEnabled(false);
-                    ((WaterDB) getApplication()).finishCup(4);
-                } else {
-                    notCurrentCup.show();
-                }
-            }
-        });
-
-        btn5.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (isCurrentCup(btn4)){
-                    btn5.setEnabled(false);
-                    ((WaterDB) getApplication()).finishCup(5);
-                } else {
-                    notCurrentCup.show();
-                }
-            }
-        });
-
-        btn6.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (isCurrentCup(btn5)){
-                    btn6.setEnabled(false);
-                    ((WaterDB) getApplication()).finishCup(6);
-                } else {
-                    notCurrentCup.show();
-                }
-            }
-        });
-
-        btn7.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (isCurrentCup(btn6)){
-                    btn7.setEnabled(false);
-                    ((WaterDB) getApplication()).finishCup(7);
-                } else {
-                    notCurrentCup.show();
-                }
-            }
-        });
-
-        btn8.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (isCurrentCup(btn7)){
-                    btn8.setEnabled(false);
-                    ((WaterDB) getApplication()).finishCup(8);
-                } else {
-                    notCurrentCup.show();
-                }
-            }
-        });
-        //endregion
-
         //region Image Cup Buttons
+        Toast notCurrentCup = Toast.makeText(getApplicationContext(), "Not Current Cup", Toast.LENGTH_SHORT);
         llCups = findViewById(R.id.llCups);
-
-//        int height = getDrawable(R.drawable.cup).getIntrinsicHeight() / 2;
-//        int width = getDrawable(R.drawable.cup).getIntrinsicWidth() / 2;
-
         btnCup1 = findViewById(R.id.btnCup1);
         btnCup2 = findViewById(R.id.btnCup2);
+        btnCup3 = findViewById(R.id.btnCup3);
+        btnCup4 = findViewById(R.id.btnCup4);
+        btnCup5 = findViewById(R.id.btnCup5);
+        btnCup6 = findViewById(R.id.btnCup6);
+        btnCup7 = findViewById(R.id.btnCup7);
+        btnCup8 = findViewById(R.id.btnCup8);
 
         llCups.post(new Runnable() {
             @Override
             public void run() {
-                Bitmap bmp = createCupBitmap(false);
-
-
-                btnCup1.setImageBitmap(bmp);
-                btnCup1.setBackgroundColor(Color.TRANSPARENT);
-
-                btnCup2.setImageBitmap(bmp);
-                btnCup2.setBackgroundColor(Color.TRANSPARENT);
-
+                setCups();
             }
         });
 
@@ -210,7 +80,11 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 changeCupImage(btnCup1);
-                ((WaterDB) getApplication()).finishCup(1);
+                try {
+                    ((WaterDB) getApplication()).finishCup(1);
+                } catch (Exception ex) {
+                    // no-op
+                }
             }
         });
 
@@ -219,7 +93,107 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View view) {
                 if (isCurrentCup(1)) {
                     changeCupImage(btnCup2);
-                    ((WaterDB) getApplication()).finishCup(2);
+                    try {
+                        ((WaterDB) getApplication()).finishCup(2);
+                    } catch (Exception ex) {
+                        // no-op
+                    }
+                } else {
+                    notCurrentCup.show();
+                }
+            }
+        });
+
+        btnCup3.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (isCurrentCup(2)) {
+                    changeCupImage(btnCup3);
+                    try {
+                        ((WaterDB) getApplication()).finishCup(3);
+                    } catch (Exception ex) {
+                        // no-op
+                    }
+                } else {
+                    notCurrentCup.show();
+                }
+            }
+        });
+
+        btnCup4.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (isCurrentCup(3)) {
+                    changeCupImage(btnCup4);
+                    try {
+                        ((WaterDB) getApplication()).finishCup(4);
+                    } catch (Exception ex) {
+                        // no-op
+                    }
+                } else {
+                    notCurrentCup.show();
+                }
+            }
+        });
+
+        btnCup5.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (isCurrentCup(4)) {
+                    changeCupImage(btnCup5);
+                    try {
+                        ((WaterDB) getApplication()).finishCup(5);
+                    } catch (Exception ex) {
+                        // no-op
+                    }
+                } else {
+                    notCurrentCup.show();
+                }
+            }
+        });
+
+        btnCup6.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (isCurrentCup(5)) {
+                    changeCupImage(btnCup6);
+                    try {
+                        ((WaterDB) getApplication()).finishCup(6);
+                    } catch (Exception ex) {
+                        // no-op
+                    }
+                } else {
+                    notCurrentCup.show();
+                }
+            }
+        });
+
+        btnCup7.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (isCurrentCup(6)) {
+                    changeCupImage(btnCup7);
+                    try {
+                        ((WaterDB) getApplication()).finishCup(7);
+                    } catch (Exception ex) {
+                        // no-op
+                    }
+                } else {
+                    notCurrentCup.show();
+                }
+            }
+        });
+
+        btnCup8.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (isCurrentCup(7)) {
+                    changeCupImage(btnCup8);
+                    try {
+                        ((WaterDB) getApplication()).finishCup(8);
+                    } catch (Exception ex) {
+                        // no-op
+                    }
                 } else {
                     notCurrentCup.show();
                 }
@@ -228,13 +202,16 @@ public class MainActivity extends AppCompatActivity {
 
         //endregion
 
-
         // Reset Button
         btnReset = findViewById(R.id.btnReset);
         btnReset.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                ((WaterDB) getApplicationContext()).resetAllCups();
+                try {
+                    ((WaterDB) getApplicationContext()).resetAllCups();
+                } catch (Exception ex) {
+                    // no-op
+                }
                 setCups();
             }
         });
@@ -257,69 +234,109 @@ public class MainActivity extends AppCompatActivity {
             // no-op
         }
 
+        // Buttons
+//        if (!cups.isEmpty()) {
+//            for (Cup cup : cups) {
+//                switch (cup.getCupID()) {
+//                    case 1:
+//                        if (cup.getIsDone()) {
+//                            btn1.setEnabled(false);
+//                        } else {
+//                            btn1.setEnabled(true);
+//                        }
+//                        break;
+//                    case 2:
+//                        if (cup.getIsDone()) {
+//                            btn2.setEnabled(false);
+//                        } else {
+//                            btn2.setEnabled(true);
+//                        }
+//                        break;
+//                    case 3:
+//                        if (cup.getIsDone()) {
+//                            btn3.setEnabled(false);
+//                        } else {
+//                            btn3.setEnabled(true);
+//                        }
+//                        break;
+//                    case 4:
+//                        if (cup.getIsDone()) {
+//                            btn4.setEnabled(false);
+//                        } else {
+//                            btn4.setEnabled(true);
+//                        }
+//                        break;
+//                    case 5:
+//                        if (cup.getIsDone()) {
+//                            btn5.setEnabled(false);
+//                        } else {
+//                            btn5.setEnabled(true);
+//                        }
+//                        break;
+//                    case 6:
+//                        if (cup.getIsDone()) {
+//                            btn6.setEnabled(false);
+//                        } else {
+//                            btn6.setEnabled(true);
+//                        }
+//                        break;
+//                    case 7:
+//                        if (cup.getIsDone()) {
+//                            btn7.setEnabled(false);
+//                        } else {
+//                            btn7.setEnabled(true);
+//                        }
+//                        break;
+//                    case 8:
+//                        if (cup.getIsDone()) {
+//                            btn8.setEnabled(false);
+//                        } else {
+//                            btn8.setEnabled(true);
+//                        }
+//                        break;
+//                }
+//            }
+//        }
+
         if (!cups.isEmpty()) {
             for (Cup cup : cups) {
+                Bitmap bmp = createCupBitmap(cup.getIsDone());
                 switch (cup.getCupID()) {
                     case 1:
-                        if (cup.getIsDone()) {
-                            btn1.setEnabled(false);
-                        } else {
-                            btn1.setEnabled(true);
-                        }
+                        btnCup1.setImageBitmap(bmp);
+                        btnCup1.setBackgroundColor(Color.TRANSPARENT);
                         break;
                     case 2:
-                        if (cup.getIsDone()) {
-                            btn2.setEnabled(false);
-                        } else {
-                            btn2.setEnabled(true);
-                        }
+                        btnCup2.setImageBitmap(bmp);
+                        btnCup2.setBackgroundColor(Color.TRANSPARENT);
                         break;
                     case 3:
-                        if (cup.getIsDone()) {
-                            btn3.setEnabled(false);
-                        } else {
-                            btn3.setEnabled(true);
-                        }
+                        btnCup3.setImageBitmap(bmp);
+                        btnCup3.setBackgroundColor(Color.TRANSPARENT);
                         break;
                     case 4:
-                        if (cup.getIsDone()) {
-                            btn4.setEnabled(false);
-                        } else {
-                            btn4.setEnabled(true);
-                        }
+                        btnCup4.setImageBitmap(bmp);
+                        btnCup4.setBackgroundColor(Color.TRANSPARENT);
                         break;
                     case 5:
-                        if (cup.getIsDone()) {
-                            btn5.setEnabled(false);
-                        } else {
-                            btn5.setEnabled(true);
-                        }
+                        btnCup5.setImageBitmap(bmp);
+                        btnCup5.setBackgroundColor(Color.TRANSPARENT);
                         break;
                     case 6:
-                        if (cup.getIsDone()) {
-                            btn6.setEnabled(false);
-                        } else {
-                            btn6.setEnabled(true);
-                        }
+                        btnCup6.setImageBitmap(bmp);
+                        btnCup6.setBackgroundColor(Color.TRANSPARENT);
                         break;
                     case 7:
-                        if (cup.getIsDone()) {
-                            btn7.setEnabled(false);
-                        } else {
-                            btn7.setEnabled(true);
-                        }
+                        btnCup7.setImageBitmap(bmp);
+                        btnCup7.setBackgroundColor(Color.TRANSPARENT);
                         break;
                     case 8:
-                        if (cup.getIsDone()) {
-                            btn8.setEnabled(false);
-                        } else {
-                            btn8.setEnabled(true);
-                        }
+                        btnCup8.setImageBitmap(bmp);
+                        btnCup8.setBackgroundColor(Color.TRANSPARENT);
                         break;
                 }
             }
         }
-
     }
 
     private boolean isCurrentCup(Button button){
@@ -332,7 +349,13 @@ public class MainActivity extends AppCompatActivity {
 
     private boolean isCurrentCup(int cupId){
         boolean currentCup = false;
-        Cup cup = ((WaterDB) getApplication()).getCup(cupId);
+        Cup cup = new Cup();
+        try {
+            cup = ((WaterDB) getApplication()).getCup(cupId);
+        } catch (Exception ex){
+            // no-op
+        }
+
         if(cup.getIsDone()){
             currentCup = true;
         }
@@ -353,13 +376,23 @@ public class MainActivity extends AppCompatActivity {
 
     private Bitmap createCupBitmap(boolean isFinished){
         Bitmap bmp;
-
         int layoutWidth = llCups.getWidth();
+        int width = layoutWidth / 16;
 
-        int width = layoutWidth / 8; //change to number of cups from 8...
+        //Log.d("Layout Width", String.valueOf(layoutWidth));
+
+//        boolean tooBig = true;
+//        int i = 1;
+//        do {
+//            width = layoutWidth / i;
+//            if (width * 8 < layoutWidth){
+//                tooBig = false;
+//            }
+//            i++;
+//            //Log.d("Width", String.valueOf(width * 8));
+//        } while(tooBig);
 
         double divider = (double)getDrawable(R.drawable.cup).getIntrinsicWidth() / width;
-
         double height = getDrawable(R.drawable.cup).getIntrinsicHeight() / divider;
 
         if (isFinished) {
@@ -369,8 +402,8 @@ public class MainActivity extends AppCompatActivity {
         }
         bmp = Bitmap.createScaledBitmap(bmp, width, (int)height, true);
 
-        Log.d("Bitmap Width", String.valueOf(bmp.getWidth()));
-        Log.d("Bitmap Height", String.valueOf(bmp.getHeight()));
+//        Log.d("Bitmap Width", String.valueOf(bmp.getWidth()));
+//        Log.d("Bitmap Height", String.valueOf(bmp.getHeight()));
 
         return bmp;
     }
