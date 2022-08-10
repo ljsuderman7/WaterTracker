@@ -18,7 +18,12 @@ public class NextCupNotificationWorker extends Worker {
     public Result doWork() {
         // If the last cup is done, cancel the notifications
         Cup lastCup = new Cup();
-        lastCup = ((WaterDB) getApplicationContext()).getCup(8);
+        try {
+            lastCup = ((WaterDB) getApplicationContext()).getCup(8);
+        } catch (Exception exception) {
+            // no-op
+        }
+
         if (lastCup.getIsDone()){ //TODO: OR after Bedtime?
             WorkManager.getInstance().cancelAllWorkByTag("next_cup_notification");
         } else {

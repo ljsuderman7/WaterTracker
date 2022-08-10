@@ -29,13 +29,13 @@ public class EverydayWorker extends Worker {
     @Override
     public Result doWork() {
         //TODO: Reset All Cups
-        //((WaterDB) getApplicationContext()).resetAllCups();
+        ((WaterDB) getApplicationContext()).resetAllCups();
 
-//        int wakeUpTime = sharedPreferences.getInt("WakeUp", 8);
-//        int bedtime = sharedPreferences.getInt("bedtime", 23);
+        String wakeUpTimeString = sharedPreferences.getString("WakeUp", "8");
+        String bedtimeString = sharedPreferences.getString("bedtime", "23");
 
-        int wakeUpTime = 8;
-        int bedtime = 23;
+        int wakeUpTime = Integer.parseInt(wakeUpTimeString);
+        int bedtime = Integer.parseInt(bedtimeString);
 
         int hoursAwake = bedtime - wakeUpTime;
         int timeBetweenCups = hoursAwake / 8; //TODO: Change to amount user chooses

@@ -37,7 +37,7 @@
         <item>11 PM</item>
     </string-array>
 
-    <integer-array name="times_value">
+    <string-array name="times_value">
         <item>0</item>
         <item>1</item>
         <item>2</item>
@@ -62,5 +62,5 @@
         <item>21</item>
         <item>22</item>
         <item>23</item>
-    </integer-array>
+    </string-array>
 </resources>

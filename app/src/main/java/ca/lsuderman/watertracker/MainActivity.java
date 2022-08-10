@@ -216,14 +216,14 @@ public class MainActivity extends AppCompatActivity {
             }
         });
         
-//        // Preferences Button
-//        btnPreferences = findViewById(R.id.btnPreferences);
-//        btnPreferences.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                startActivity(new Intent(getApplicationContext(), SettingsActivity.class));
-//            }
-//        });
+        // Preferences Button
+        btnPreferences = findViewById(R.id.btnPreferences);
+        btnPreferences.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(getApplicationContext(), SettingsActivity.class));
+            }
+        });
     }
 
     private void setCups() {
@@ -233,70 +233,6 @@ public class MainActivity extends AppCompatActivity {
         } catch (Exception ex) {
             // no-op
         }
-
-        // Buttons
-//        if (!cups.isEmpty()) {
-//            for (Cup cup : cups) {
-//                switch (cup.getCupID()) {
-//                    case 1:
-//                        if (cup.getIsDone()) {
-//                            btn1.setEnabled(false);
-//                        } else {
-//                            btn1.setEnabled(true);
-//                        }
-//                        break;
-//                    case 2:
-//                        if (cup.getIsDone()) {
-//                            btn2.setEnabled(false);
-//                        } else {
-//                            btn2.setEnabled(true);
-//                        }
-//                        break;
-//                    case 3:
-//                        if (cup.getIsDone()) {
-//                            btn3.setEnabled(false);
-//                        } else {
-//                            btn3.setEnabled(true);
-//                        }
-//                        break;
-//                    case 4:
-//                        if (cup.getIsDone()) {
-//                            btn4.setEnabled(false);
-//                        } else {
-//                            btn4.setEnabled(true);
-//                        }
-//                        break;
-//                    case 5:
-//                        if (cup.getIsDone()) {
-//                            btn5.setEnabled(false);
-//                        } else {
-//                            btn5.setEnabled(true);
-//                        }
-//                        break;
-//                    case 6:
-//                        if (cup.getIsDone()) {
-//                            btn6.setEnabled(false);
-//                        } else {
-//                            btn6.setEnabled(true);
-//                        }
-//                        break;
-//                    case 7:
-//                        if (cup.getIsDone()) {
-//                            btn7.setEnabled(false);
-//                        } else {
-//                            btn7.setEnabled(true);
-//                        }
-//                        break;
-//                    case 8:
-//                        if (cup.getIsDone()) {
-//                            btn8.setEnabled(false);
-//                        } else {
-//                            btn8.setEnabled(true);
-//                        }
-//                        break;
-//                }
-//            }
-//        }
 
         if (!cups.isEmpty()) {
             for (Cup cup : cups) {
@@ -337,14 +273,6 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         }
-    }
-
-    private boolean isCurrentCup(Button button){
-        boolean currentCup = false;
-        if(!button.isEnabled()){
-            currentCup = true;
-        }
-        return currentCup;
     }
 
     private boolean isCurrentCup(int cupId){
