@@ -12,7 +12,14 @@ import androidx.work.WorkManager;
 import androidx.work.Worker;
 import androidx.work.WorkerParameters;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
+import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
 public class EverydayWorker extends Worker {
@@ -28,8 +35,46 @@ public class EverydayWorker extends Worker {
     @NonNull
     @Override
     public Result doWork() {
+        //TODO: Add Daily Result, unless it is the first day
+        List<DailyResult> results = new ArrayList<>();
+        Cup lastCup = new Cup();
+
+//        DateFormat dateFormat = new SimpleDateFormat("dd/MM/yy", Locale.getDefault());
+//        Calendar date = Calendar.getInstance();
+//        date.set(Calendar.DATE, -1);
+//        String yesterday = dateFormat.format(date.getTime());
+        LocalDate today = LocalDate.now();
+        String yesterday = (today.minusDays(1)).format(DateTimeFormatter.ISO_DATE);
+
+
+        try {
+            results = ((WaterDB) getApplicationContext()).getAllResults();
+            lastCup = ((WaterDB) getApplicationContext()).getCup(8); //TODO: Change to amount user chooses
+        } catch (Exception ex) {
+            // no-op
+        }
+        if (results != null){
+            if (lastCup.getIsDone()){
+                try {
+                    ((WaterDB) getApplicationContext()).addResult(yesterday, 1);
+                } catch (Exception ex){
+                    // no-op
+                }
+            } else {
+                try {
+                    ((WaterDB) getApplicationContext()).addResult(yesterday, 0);
+                } catch (Exception ex){
+                    // no-op
+                }
+            }
+        }
+
         //TODO: Reset All Cups
-        ((WaterDB) getApplicationContext()).resetAllCups();
+        try {
+            ((WaterDB) getApplicationContext()).resetAllCups();
+        } catch (Exception ex){
+            // no-op
+        }
 
         String wakeUpTimeString = sharedPreferences.getString("WakeUp", "8");
         String bedtimeString = sharedPreferences.getString("bedtime", "23");
@@ -51,7 +96,7 @@ public class EverydayWorker extends Worker {
                 ExistingPeriodicWorkPolicy.REPLACE,
                 request);
 
-        Log.d("Testing EverydayWorker Initial Delay", "SUCCESS");
+        //Log.d("Testing EverydayWorker Initial Delay", "SUCCESS");
         return Result.success();
     }
 }

@@ -81,6 +81,13 @@
 <!--                android:text="8" />-->
 <!--        </LinearLayout>-->
 
+        <TextView
+            android:id="@+id/textView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Cups to Drink:"
+            android:textSize="20sp" />
+
         <LinearLayout
             android:id="@+id/llCups"
             android:layout_width="match_parent"
@@ -138,16 +145,16 @@
         </LinearLayout>
 
         <Button
-            android:id="@+id/btnReset"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Reset" />
-
-        <Button
             android:id="@+id/btnPreferences"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Set Preferences" />
+
+        <Button
+            android:id="@+id/btnReset"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Reset" />
 
     </LinearLayout>
 

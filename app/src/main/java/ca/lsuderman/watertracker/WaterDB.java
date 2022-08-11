@@ -11,7 +11,7 @@ import java.util.List;
 
 public class WaterDB extends Application {
     private static final String DB_NAME = "db_Water";
-    private static int DB_VERSION = 1;
+    private static int DB_VERSION = 2;
 
     private SQLiteOpenHelper helper;
 
@@ -23,6 +23,11 @@ public class WaterDB extends Application {
                 db.execSQL("CREATE TABLE IF NOT EXISTS tbl_cups(" +
                         "CupID INTEGER PRIMARY KEY," +
                         "IsDone INTEGER NOT NULL)");
+
+                db.execSQL("CREATE TABLE IF NOT EXISTS tbl_daily_results(" +
+                        "ResultID INTEGER PRIMARY KEY," +
+                        "Date TEXT NOT NULL," +
+                        "FinishedAllCups INTEGER NOT NULL)");
             }
 
             @Override
@@ -33,6 +38,8 @@ public class WaterDB extends Application {
 
         super.onCreate();
     }
+
+    //region Cups
 
     // Add Cup
     public void addCup(){
@@ -94,7 +101,6 @@ public class WaterDB extends Application {
                 Cup cup = new Cup();
                 cup.setCupID(cursor.getInt(0));
 
-                // set isDone based on if it is 0 (True), or 1 (false)
                 int isDoneInt = cursor.getInt(1);
                 if(isDoneInt == 1){
                     cup.setIsDone(true);
@@ -110,6 +116,46 @@ public class WaterDB extends Application {
         cursor.close();
         return cups;
     }
+
+    //endregion
+
+    //region Daily Results
+
+    // Add Result
+    public void addResult(String date, int finishedAllCups){
+        SQLiteDatabase db = helper.getWritableDatabase();
+        db.execSQL("INSERT INTO tbl_daily_results(Date, FinishedAllCups) VALUES ('" + date + "', '" + finishedAllCups +"')");
+    }
+
+    // Get All Results
+    public List<DailyResult> getAllResults(){
+        SQLiteDatabase db = helper.getReadableDatabase();
+        List<DailyResult> results = new ArrayList<>();
+        Cursor cursor = db.rawQuery("SELECT * FROM tbl_daily_results ORDER BY ResultID", null);
+        cursor.moveToFirst();
+        if (cursor.getCount() > 0){
+            while (cursor.getPosition() < cursor.getCount()) {
+                DailyResult result = new DailyResult();
+
+                result.setResultID(cursor.getInt(0));
+                result.setDate(cursor.getString(1));
+
+                int completedAllCupsInt = cursor.getInt(2);
+                if(completedAllCupsInt == 1){
+                    result.setFinishedAllCups(true);
+                }
+                else{
+                    result.setFinishedAllCups(false);
+                }
+                results.add(result);
+                cursor.moveToNext();
+            }
+        }
+        cursor.close();
+        return results;
+    }
+
+    //endregion
 }
 
 
