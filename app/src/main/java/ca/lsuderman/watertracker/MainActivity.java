@@ -46,6 +46,8 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        insertDummyData();
+
 //        Toast toast = Toast.makeText(getApplicationContext(), "", Toast.LENGTH_LONG);
 //        toast.show();
 
@@ -339,5 +341,37 @@ public class MainActivity extends AppCompatActivity {
 //        Log.d("Bitmap Height", String.valueOf(bmp.getHeight()));
 
         return bmp;
+    }
+
+    private void insertDummyData(){
+        List<DailyResult> results = ((WaterDB) getApplication()).getAllResults();
+        List<Cup> cups = ((WaterDB) getApplication()).getAllCups();
+
+        if (results == null || results.isEmpty()) {
+            try {
+                ((WaterDB) getApplication()).addResult("2022-07-31", 1);
+                ((WaterDB) getApplication()).addResult("2022-08-01", 1);
+                ((WaterDB) getApplication()).addResult("2022-08-02", 0);
+                ((WaterDB) getApplication()).addResult("2022-08-03", 1);
+                ((WaterDB) getApplication()).addResult("2022-08-04", 0);
+                ((WaterDB) getApplication()).addResult("2022-08-05", 0);
+                ((WaterDB) getApplication()).addResult("2022-08-06", 1);
+                ((WaterDB) getApplication()).addResult("2022-08-07", 1);
+                ((WaterDB) getApplication()).addResult("2022-08-08", 0);
+                ((WaterDB) getApplication()).addResult("2022-08-09", 1);
+            } catch (Exception ex){
+                // no-op
+            }
+        }
+
+        if (cups == null || cups.isEmpty()){
+            for (int i = 0; i < 8; i++){
+                try {
+                    ((WaterDB) getApplication()).addCup();
+                } catch (Exception ex){
+                    // no-op
+                }
+            }
+        }
     }
 }

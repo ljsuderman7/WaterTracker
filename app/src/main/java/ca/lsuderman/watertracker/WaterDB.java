@@ -11,7 +11,7 @@ import java.util.List;
 
 public class WaterDB extends Application {
     private static final String DB_NAME = "db_Water";
-    private static int DB_VERSION = 2;
+    private static int DB_VERSION = 3;
 
     private SQLiteOpenHelper helper;
 
