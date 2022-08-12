@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
+import androidx.preference.PreferenceManager;
 import androidx.work.ExistingPeriodicWorkPolicy;
 import androidx.work.OneTimeWorkRequest;
 import androidx.work.PeriodicWorkRequest;
@@ -76,6 +77,8 @@ public class EverydayWorker extends Worker {
             // no-op
         }
 
+        sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+
         String wakeUpTimeString = sharedPreferences.getString("WakeUp", "8");
         String bedtimeString = sharedPreferences.getString("bedtime", "23");
 
@@ -83,12 +86,12 @@ public class EverydayWorker extends Worker {
         int bedtime = Integer.parseInt(bedtimeString);
 
         int hoursAwake = bedtime - wakeUpTime;
-        int timeBetweenCups = hoursAwake / 8; //TODO: Change to amount user chooses
+        long timeBetweenCups = (hoursAwake * 3600000) / (8 * 3600000); //TODO: Change to amount user chooses
 
         long delay = Utilities.getInitialDelay(wakeUpTime);
 
         PeriodicWorkRequest request =
-                new PeriodicWorkRequest.Builder(NextCupNotificationWorker.class, timeBetweenCups, TimeUnit.HOURS)
+                new PeriodicWorkRequest.Builder(NextCupNotificationWorker.class, timeBetweenCups, TimeUnit.MILLISECONDS)
                         .setInitialDelay(delay, TimeUnit.MILLISECONDS)
                         .build();
 
