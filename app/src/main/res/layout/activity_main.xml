@@ -145,12 +145,6 @@
         </LinearLayout>
 
         <Button
-            android:id="@+id/btnPreferences"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Set Preferences" />
-
-        <Button
             android:id="@+id/btnReset"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

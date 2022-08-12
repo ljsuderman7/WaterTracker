@@ -21,4 +21,6 @@
 
     <string name="wake_up">Usual Wake up Time</string>
     <string name="bedtime">Usual Bedtime</string>
+    <string name="btnClearDrinkingHistory">btnClearDrinkingHistory</string>
+    <string name="btnResetCups">btnResetCups</string>
 </resources>

@@ -1,5 +1,6 @@
 package ca.lsuderman.watertracker;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.preference.PreferenceManager;
 import androidx.work.ExistingPeriodicWorkPolicy;
@@ -16,6 +17,8 @@ import android.graphics.Color;
 import android.nfc.Tag;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewTreeObserver;
 import android.widget.Button;
@@ -223,15 +226,6 @@ public class MainActivity extends AppCompatActivity {
                 setCups();
             }
         });
-        
-        // Preferences Button
-        btnPreferences = findViewById(R.id.btnPreferences);
-        btnPreferences.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                startActivity(new Intent(getApplicationContext(), SettingsActivity.class));
-            }
-        });
     }
 
     private void setCups() {
@@ -374,5 +368,25 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_right, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        boolean ret = false;
+        switch (item.getItemId()) {
+            case R.id.action_settings:
+                startActivity(new Intent(getApplicationContext(), SettingsActivity.class));
+                break;
+            default:
+                ret = super.onOptionsItemSelected(item);
+                break;
+        }
+        return super.onOptionsItemSelected(item);
     }
 }
