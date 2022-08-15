@@ -38,7 +38,7 @@ public class EverydayWorker extends Worker {
     public Result doWork() {
         addDailyResult();
         resetCups();
-        //createNotificationWorker();
+        createNotificationWorker();
 
         return Result.success();
     }
@@ -46,11 +46,6 @@ public class EverydayWorker extends Worker {
     private void addDailyResult(){
         List<DailyResult> results = new ArrayList<>();
         Cup lastCup = new Cup();
-
-//        DateFormat dateFormat = new SimpleDateFormat("dd/MM/yy", Locale.getDefault());
-//        Calendar date = Calendar.getInstance();
-//        date.set(Calendar.DATE, -1);
-//        String yesterday = dateFormat.format(date.getTime());
         LocalDate today = LocalDate.now();
         String yesterday = (today.minusDays(1)).format(DateTimeFormatter.ISO_DATE);
 
@@ -103,8 +98,7 @@ public class EverydayWorker extends Worker {
 
         PeriodicWorkRequest request =
                 new PeriodicWorkRequest.Builder(NextCupNotificationWorker.class, timeBetweenCups, TimeUnit.MILLISECONDS)
-                        //.setInitialDelay(delay, TimeUnit.MILLISECONDS)
-                        .setInitialDelay(6, TimeUnit.HOURS)
+                        .setInitialDelay(delay, TimeUnit.MILLISECONDS)
                         .build();
 
         WorkManager.getInstance().enqueueUniquePeriodicWork("next_cup_notification",

@@ -25,6 +25,7 @@ import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.sql.Time;
@@ -38,10 +39,13 @@ import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
+import javax.xml.transform.Result;
+
 public class MainActivity extends AppCompatActivity {
 
     private ImageButton btnCup1, btnCup2, btnCup3, btnCup4, btnCup5, btnCup6, btnCup7, btnCup8;
     private LinearLayout llCups;
+    private TextView txtDaysComplete, txtDaysIncomplete, txtPercentage;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -208,6 +212,52 @@ public class MainActivity extends AppCompatActivity {
         });
 
         //endregion
+
+        txtDaysComplete = findViewById(R.id.txtDaysCompleted);
+        txtDaysIncomplete = findViewById(R.id.txtDaysIncomplete);
+        txtPercentage = findViewById(R.id.txtPercentage);
+
+        List<DailyResult> resutls = null;
+        try {
+            resutls = ((WaterDB) getApplication()).getAllResults();
+        } catch (Exception ex){
+            // no-op
+        }
+        double completeDays = 0;
+        double incompleteDays = 0;
+        for (DailyResult result:  resutls) {
+            if (result.getFinishedAllCups()){
+                completeDays++;
+            } else {
+                incompleteDays++;
+            }
+        }
+        txtDaysComplete.setText(String.valueOf((int)completeDays));
+        txtDaysIncomplete.setText(String.valueOf((int)incompleteDays));
+
+        double totalDays = completeDays + incompleteDays;
+        double completedPercentage = completeDays / totalDays;
+        double displayPercentage = completedPercentage * 100;
+        String percentageText = "You've drank the recommended number of cups " + (int)displayPercentage + "% of the time. ";
+
+        if (completedPercentage >= 0.90){
+            percentageText += "Keep up the good work!";
+            txtPercentage.setTextColor(getResources().getColor(R.color.green));
+        } else if (completedPercentage >= 0.75){
+            percentageText += "Good job but you can do a little better.";
+            txtPercentage.setTextColor(getResources().getColor(R.color.green));
+        } else if (completedPercentage >= 0.5){
+            percentageText += "You can do a better.";
+            txtPercentage.setTextColor(getResources().getColor(R.color.yellow));
+        } else if (completedPercentage >= 0.25){
+            percentageText += "You can do a lot better.";
+            txtPercentage.setTextColor(getResources().getColor(R.color.orange));
+        } else {
+            percentageText += "You need to drink more water!";
+            txtPercentage.setTextColor(getResources().getColor(R.color.red));
+        }
+
+        txtPercentage.setText(percentageText);
     }
 
     private void setCups() {
