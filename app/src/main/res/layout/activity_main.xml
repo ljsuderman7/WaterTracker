@@ -19,68 +19,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
-<!--        <LinearLayout-->
-<!--            android:layout_width="match_parent"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:orientation="horizontal">-->
-
-<!--            <Button-->
-<!--                android:id="@+id/btn1"-->
-<!--                android:layout_width="wrap_content"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                android:layout_weight="1"-->
-<!--                android:text="1" />-->
-
-<!--            <Button-->
-<!--                android:id="@+id/btn2"-->
-<!--                android:layout_width="wrap_content"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                android:layout_weight="1"-->
-<!--                android:text="2" />-->
-
-<!--            <Button-->
-<!--                android:id="@+id/btn3"-->
-<!--                android:layout_width="wrap_content"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                android:layout_weight="1"-->
-<!--                android:text="3" />-->
-
-<!--            <Button-->
-<!--                android:id="@+id/btn4"-->
-<!--                android:layout_width="wrap_content"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                android:layout_weight="1"-->
-<!--                android:text="4" />-->
-
-<!--            <Button-->
-<!--                android:id="@+id/btn5"-->
-<!--                android:layout_width="wrap_content"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                android:layout_weight="1"-->
-<!--                android:text="5" />-->
-
-<!--            <Button-->
-<!--                android:id="@+id/btn6"-->
-<!--                android:layout_width="wrap_content"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                android:layout_weight="1"-->
-<!--                android:text="6" />-->
-
-<!--            <Button-->
-<!--                android:id="@+id/btn7"-->
-<!--                android:layout_width="wrap_content"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                android:layout_weight="1"-->
-<!--                android:text="7" />-->
-
-<!--            <Button-->
-<!--                android:id="@+id/btn8"-->
-<!--                android:layout_width="wrap_content"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                android:layout_weight="1"-->
-<!--                android:text="8" />-->
-<!--        </LinearLayout>-->
-
         <TextView
             android:id="@+id/textView"
             android:layout_width="match_parent"
@@ -143,12 +81,6 @@
                 android:layout_weight="0" />
 
         </LinearLayout>
-
-        <Button
-            android:id="@+id/btnReset"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Reset" />
 
     </LinearLayout>
 

@@ -36,7 +36,14 @@ public class EverydayWorker extends Worker {
     @NonNull
     @Override
     public Result doWork() {
-        //TODO: Add Daily Result, unless it is the first day
+        addDailyResult();
+        resetCups();
+        //createNotificationWorker();
+
+        return Result.success();
+    }
+
+    private void addDailyResult(){
         List<DailyResult> results = new ArrayList<>();
         Cup lastCup = new Cup();
 
@@ -69,37 +76,39 @@ public class EverydayWorker extends Worker {
                 }
             }
         }
+    }
 
-        //TODO: Reset All Cups
+    private void resetCups(){
         try {
             ((WaterDB) getApplicationContext()).resetAllCups();
         } catch (Exception ex){
             // no-op
         }
+    }
 
+    private void createNotificationWorker(){
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
 
-        String wakeUpTimeString = sharedPreferences.getString("WakeUp", "8");
+        String wakeUpTimeString = sharedPreferences.getString("wakeUp", "8");
         String bedtimeString = sharedPreferences.getString("bedtime", "23");
 
         int wakeUpTime = Integer.parseInt(wakeUpTimeString);
         int bedtime = Integer.parseInt(bedtimeString);
 
         int hoursAwake = bedtime - wakeUpTime;
-        long timeBetweenCups = (hoursAwake * 3600000) / (8 * 3600000); //TODO: Change to amount user chooses
+        double timeBetweenCupsDouble = ((double)hoursAwake / 8) * 3600000;
+        long timeBetweenCups = (long)timeBetweenCupsDouble; //TODO: Change to amount user chooses
 
         long delay = Utilities.getInitialDelay(wakeUpTime);
 
         PeriodicWorkRequest request =
                 new PeriodicWorkRequest.Builder(NextCupNotificationWorker.class, timeBetweenCups, TimeUnit.MILLISECONDS)
-                        .setInitialDelay(delay, TimeUnit.MILLISECONDS)
+                        //.setInitialDelay(delay, TimeUnit.MILLISECONDS)
+                        .setInitialDelay(6, TimeUnit.HOURS)
                         .build();
 
         WorkManager.getInstance().enqueueUniquePeriodicWork("next_cup_notification",
                 ExistingPeriodicWorkPolicy.REPLACE,
                 request);
-
-        //Log.d("Testing EverydayWorker Initial Delay", "SUCCESS");
-        return Result.success();
     }
 }

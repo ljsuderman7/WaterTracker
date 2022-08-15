@@ -35,7 +35,6 @@ public class SettingsActivity extends AppCompatActivity {
             setPreferencesFromResource(R.xml.root_preferences, rootKey);
 
             Preference btnClearDrinkingHistory = findPreference(getString(R.string.btnClearDrinkingHistory));
-            Preference btnResetCups = findPreference(getString(R.string.btnResetCups));
 
             btnClearDrinkingHistory.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
                 @Override
@@ -46,34 +45,7 @@ public class SettingsActivity extends AppCompatActivity {
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i) {
                             try {
-                                //TODO: clear drinking history
-                            } catch (Exception ex){
-                                // no-op
-                            }
-                        }
-                    });
-                    builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialogInterface, int i) {
-                            // no-op
-                        }
-                    });
-                    AlertDialog dialog = builder.create();
-                    dialog.show();
-                    return true;
-                }
-            });
-
-            btnResetCups.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
-                @Override
-                public boolean onPreferenceClick(Preference preference) {
-                    AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-                    builder.setMessage("Reset Cups").setTitle("Reset Cups");
-                    builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialogInterface, int i) {
-                            try {
-                                ((WaterDB) getActivity().getApplication()).resetAllCups();
+                                ((WaterDB) getActivity().getApplication()).deleteResults();
                             } catch (Exception ex){
                                 // no-op
                             }

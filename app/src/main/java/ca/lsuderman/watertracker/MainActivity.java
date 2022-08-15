@@ -40,10 +40,8 @@ import java.util.concurrent.TimeUnit;
 
 public class MainActivity extends AppCompatActivity {
 
-    private Button btn1, btn2, btn3, btn4, btn5, btn6, btn7, btn8, btnReset, btnPreferences;
     private ImageButton btnCup1, btnCup2, btnCup3, btnCup4, btnCup5, btnCup6, btnCup7, btnCup8;
     private LinearLayout llCups;
-    private SharedPreferences sharedPreferences;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,9 +49,6 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         insertDummyData();
-
-//        Toast toast = Toast.makeText(getApplicationContext(), "", Toast.LENGTH_LONG);
-//        toast.show();
 
         long delay = Utilities.getInitialDelay(2);
 
@@ -68,7 +63,8 @@ public class MainActivity extends AppCompatActivity {
                 ExistingPeriodicWorkPolicy.REPLACE,
                 request);
 
-        //region Image Cup Buttons
+        //region Image Cup Buttons Setup
+
         Toast notCurrentCup = Toast.makeText(getApplicationContext(), "Not Current Cup", Toast.LENGTH_SHORT);
         llCups = findViewById(R.id.llCups);
         btnCup1 = findViewById(R.id.btnCup1);
@@ -212,20 +208,6 @@ public class MainActivity extends AppCompatActivity {
         });
 
         //endregion
-
-        // Reset Button
-        btnReset = findViewById(R.id.btnReset);
-        btnReset.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                try {
-                    ((WaterDB) getApplicationContext()).resetAllCups();
-                } catch (Exception ex) {
-                    // no-op
-                }
-                setCups();
-            }
-        });
     }
 
     private void setCups() {

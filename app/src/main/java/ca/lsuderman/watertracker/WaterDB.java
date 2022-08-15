@@ -155,6 +155,12 @@ public class WaterDB extends Application {
         return results;
     }
 
+    // Delete Results
+    public void deleteResults(){
+        SQLiteDatabase db = helper.getWritableDatabase();
+        db.execSQL("DELETE FROM tbl_daily_results");
+    }
+
     //endregion
 }
 

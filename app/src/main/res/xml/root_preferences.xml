@@ -22,10 +22,6 @@
             android:title="Clear Drinking History"
             android:key="@string/btnClearDrinkingHistory"
             />
-        <Preference
-            android:title="Reset Cups (REMOVE LATER)"
-            android:key="@string/btnResetCups"
-            />
     </PreferenceCategory>
 
 </PreferenceScreen>
