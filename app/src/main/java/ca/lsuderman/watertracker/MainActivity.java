@@ -1,6 +1,7 @@
 package ca.lsuderman.watertracker;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.preference.PreferenceManager;
 import androidx.work.ExistingPeriodicWorkPolicy;
@@ -45,12 +46,19 @@ public class MainActivity extends AppCompatActivity {
 
     private ImageButton btnCup1, btnCup2, btnCup3, btnCup4, btnCup5, btnCup6, btnCup7, btnCup8;
     private LinearLayout llCups;
-    private TextView txtDaysComplete, txtDaysIncomplete, txtPercentage;
+    private TextView txtDaysComplete, txtDaysIncomplete, txtPercentage, txtDaysCompleteLabel, txtDaysIncompleteLabel, txtDrinkingHistoryLabel;
+    private SharedPreferences sharedPreferences;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null){
+            actionBar.setTitle("Home");
+        }
 
         insertDummyData();
 
@@ -59,12 +67,12 @@ public class MainActivity extends AppCompatActivity {
         // Creates a PeriodicWorkRequest that will repeat everyday, and is initially delayed until 2AM
         PeriodicWorkRequest request =
                 new PeriodicWorkRequest.Builder(EverydayWorker.class, 1, TimeUnit.DAYS)
-                        .setInitialDelay(delay, TimeUnit.MILLISECONDS)
+                        //.setInitialDelay(delay, TimeUnit.MILLISECONDS)
                         .build();
 
         // Puts request in the queue
         WorkManager.getInstance().enqueueUniquePeriodicWork("reset_cups_periodic",
-                ExistingPeriodicWorkPolicy.REPLACE,
+                ExistingPeriodicWorkPolicy.KEEP,
                 request);
 
         //region Image Cup Buttons Setup
@@ -213,51 +221,66 @@ public class MainActivity extends AppCompatActivity {
 
         //endregion
 
+        //region Daily Results TextViews
+
         txtDaysComplete = findViewById(R.id.txtDaysCompleted);
         txtDaysIncomplete = findViewById(R.id.txtDaysIncomplete);
         txtPercentage = findViewById(R.id.txtPercentage);
+        txtDaysCompleteLabel = findViewById(R.id.txtDaysCompleteLabel);
+        txtDaysIncompleteLabel = findViewById(R.id.txtDaysIncompleteLabel);
+        txtDrinkingHistoryLabel = findViewById(R.id.txtDrinkingHistoryLabel);
 
-        List<DailyResult> resutls = null;
+        List<DailyResult> results = null;
         try {
-            resutls = ((WaterDB) getApplication()).getAllResults();
+            results = ((WaterDB) getApplication()).getAllResults();
         } catch (Exception ex){
             // no-op
         }
         double completeDays = 0;
-        double incompleteDays = 0;
-        for (DailyResult result:  resutls) {
+        double incompleteDays = -1; //set to -1 to offset the initial load
+        for (DailyResult result:  results) {
             if (result.getFinishedAllCups()){
                 completeDays++;
             } else {
                 incompleteDays++;
             }
         }
-        txtDaysComplete.setText(String.valueOf((int)completeDays));
-        txtDaysIncomplete.setText(String.valueOf((int)incompleteDays));
 
-        double totalDays = completeDays + incompleteDays;
-        double completedPercentage = completeDays / totalDays;
-        double displayPercentage = completedPercentage * 100;
-        String percentageText = "You've drank the recommended number of cups " + (int)displayPercentage + "% of the time. ";
+        if (results.size() > 1) {
+            txtDaysCompleteLabel.setVisibility(View.VISIBLE);
+            txtDaysIncompleteLabel.setVisibility(View.VISIBLE);
+            txtDrinkingHistoryLabel.setVisibility(View.VISIBLE);
 
-        if (completedPercentage >= 0.90){
-            percentageText += "Keep up the good work!";
-            txtPercentage.setTextColor(getResources().getColor(R.color.green));
-        } else if (completedPercentage >= 0.75){
-            percentageText += "Good job but you can do a little better.";
-            txtPercentage.setTextColor(getResources().getColor(R.color.green));
-        } else if (completedPercentage >= 0.5){
-            percentageText += "You can do a better.";
-            txtPercentage.setTextColor(getResources().getColor(R.color.yellow));
-        } else if (completedPercentage >= 0.25){
-            percentageText += "You can do a lot better.";
-            txtPercentage.setTextColor(getResources().getColor(R.color.orange));
-        } else {
-            percentageText += "You need to drink more water!";
-            txtPercentage.setTextColor(getResources().getColor(R.color.red));
+            txtDaysComplete.setText(String.valueOf((int) completeDays));
+            txtDaysIncomplete.setText(String.valueOf((int) incompleteDays));
+
+            double totalDays = completeDays + incompleteDays;
+            double completedPercentage = completeDays / totalDays;
+            double displayPercentage = completedPercentage * 100;
+            String percentageText = "You've had the recommended amount of water " + (int) displayPercentage + "% of the time. ";
+
+            if (completedPercentage >= 0.90) {
+                percentageText += "Keep up the good work!";
+                txtPercentage.setTextColor(getResources().getColor(R.color.green));
+            } else if (completedPercentage >= 0.75) {
+                percentageText += "Good job but you can do a little better.";
+                txtPercentage.setTextColor(getResources().getColor(R.color.green));
+            } else if (completedPercentage >= 0.5) {
+                percentageText += "You can do better.";
+                txtPercentage.setTextColor(getResources().getColor(R.color.yellow));
+            } else if (completedPercentage >= 0.25) {
+                percentageText += "You can do a lot better.";
+                txtPercentage.setTextColor(getResources().getColor(R.color.orange));
+            } else {
+                percentageText += "You need to drink more water!";
+                txtPercentage.setTextColor(getResources().getColor(R.color.red));
+            }
+
+            txtPercentage.setText(percentageText);
         }
 
-        txtPercentage.setText(percentageText);
+
+        //endregion
     }
 
     private void setCups() {
@@ -374,22 +397,22 @@ public class MainActivity extends AppCompatActivity {
         List<DailyResult> results = ((WaterDB) getApplication()).getAllResults();
         List<Cup> cups = ((WaterDB) getApplication()).getAllCups();
 
-        if (results == null || results.isEmpty()) {
-            try {
-                ((WaterDB) getApplication()).addResult("2022-07-31", 1);
-                ((WaterDB) getApplication()).addResult("2022-08-01", 1);
-                ((WaterDB) getApplication()).addResult("2022-08-02", 0);
-                ((WaterDB) getApplication()).addResult("2022-08-03", 1);
-                ((WaterDB) getApplication()).addResult("2022-08-04", 0);
-                ((WaterDB) getApplication()).addResult("2022-08-05", 0);
-                ((WaterDB) getApplication()).addResult("2022-08-06", 1);
-                ((WaterDB) getApplication()).addResult("2022-08-07", 1);
-                ((WaterDB) getApplication()).addResult("2022-08-08", 0);
-                ((WaterDB) getApplication()).addResult("2022-08-09", 1);
-            } catch (Exception ex){
-                // no-op
-            }
-        }
+//        if (results == null || results.isEmpty()) {
+//            try {
+//                ((WaterDB) getApplication()).addResult("2022-07-31", 1);
+//                ((WaterDB) getApplication()).addResult("2022-08-01", 1);
+//                ((WaterDB) getApplication()).addResult("2022-08-02", 0);
+//                ((WaterDB) getApplication()).addResult("2022-08-03", 1);
+//                ((WaterDB) getApplication()).addResult("2022-08-04", 0);
+//                ((WaterDB) getApplication()).addResult("2022-08-05", 0);
+//                ((WaterDB) getApplication()).addResult("2022-08-06", 1);
+//                ((WaterDB) getApplication()).addResult("2022-08-07", 1);
+//                ((WaterDB) getApplication()).addResult("2022-08-08", 0);
+//                ((WaterDB) getApplication()).addResult("2022-08-09", 1);
+//            } catch (Exception ex){
+//                // no-op
+//            }
+//        }
 
         if (cups == null || cups.isEmpty()){
             for (int i = 0; i < 8; i++){
@@ -401,6 +424,7 @@ public class MainActivity extends AppCompatActivity {
             }
         }
     }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

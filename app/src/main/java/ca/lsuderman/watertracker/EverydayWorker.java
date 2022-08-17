@@ -44,31 +44,26 @@ public class EverydayWorker extends Worker {
     }
 
     private void addDailyResult(){
-        List<DailyResult> results = new ArrayList<>();
         Cup lastCup = new Cup();
         LocalDate today = LocalDate.now();
         String yesterday = (today.minusDays(1)).format(DateTimeFormatter.ISO_DATE);
 
-
         try {
-            results = ((WaterDB) getApplicationContext()).getAllResults();
             lastCup = ((WaterDB) getApplicationContext()).getCup(8); //TODO: Change to amount user chooses
         } catch (Exception ex) {
             // no-op
         }
-        if (results != null){
-            if (lastCup.getIsDone()){
-                try {
-                    ((WaterDB) getApplicationContext()).addResult(yesterday, 1);
-                } catch (Exception ex){
-                    // no-op
-                }
-            } else {
-                try {
-                    ((WaterDB) getApplicationContext()).addResult(yesterday, 0);
-                } catch (Exception ex){
-                    // no-op
-                }
+        if (lastCup.getIsDone()){
+            try {
+                ((WaterDB) getApplicationContext()).addResult(yesterday, 1);
+            } catch (Exception ex){
+                // no-op
+            }
+        } else {
+            try {
+                ((WaterDB) getApplicationContext()).addResult(yesterday, 0);
+            } catch (Exception ex){
+                // no-op
             }
         }
     }
@@ -84,25 +79,23 @@ public class EverydayWorker extends Worker {
     private void createNotificationWorker(){
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
 
-        String wakeUpTimeString = sharedPreferences.getString("wakeUp", "8");
-        String bedtimeString = sharedPreferences.getString("bedtime", "23");
+        int wakeUpTime = Integer.parseInt(sharedPreferences.getString("wakeUp", "8"));
+        int timeBetweenNotifications = Integer.parseInt(sharedPreferences.getString("timeBetweenNotifications", "2"));
 
-        int wakeUpTime = Integer.parseInt(wakeUpTimeString);
-        int bedtime = Integer.parseInt(bedtimeString);
-
-        int hoursAwake = bedtime - wakeUpTime;
-        double timeBetweenCupsDouble = ((double)hoursAwake / 8) * 3600000;
-        long timeBetweenCups = (long)timeBetweenCupsDouble; //TODO: Change to amount user chooses
+//        int hoursAwake = bedtime - wakeUpTime;
+//        double timeBetweenCupsDouble = ((double)hoursAwake / 8) * 3600000;
+//        long timeBetweenCups = (long)timeBetweenCupsDouble;
 
         long delay = Utilities.getInitialDelay(wakeUpTime);
 
-        PeriodicWorkRequest request =
-                new PeriodicWorkRequest.Builder(NextCupNotificationWorker.class, timeBetweenCups, TimeUnit.MILLISECONDS)
-                        .setInitialDelay(delay, TimeUnit.MILLISECONDS)
-                        .build();
-
-        WorkManager.getInstance().enqueueUniquePeriodicWork("next_cup_notification",
-                ExistingPeriodicWorkPolicy.REPLACE,
-                request);
+        if (timeBetweenNotifications != 0) {
+            PeriodicWorkRequest request =
+                    new PeriodicWorkRequest.Builder(NextCupNotificationWorker.class, timeBetweenNotifications, TimeUnit.HOURS)
+                            .setInitialDelay(timeBetweenNotifications, TimeUnit.HOURS)
+                            .build();
+            WorkManager.getInstance().enqueueUniquePeriodicWork("next_notification",
+                    ExistingPeriodicWorkPolicy.KEEP,
+                    request);
+        }
     }
 }

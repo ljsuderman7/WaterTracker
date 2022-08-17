@@ -23,5 +23,15 @@
             android:key="@string/btnClearDrinkingHistory"
             />
     </PreferenceCategory>
+    <PreferenceCategory android:title="Notification Settings">
+
+        <ListPreference
+            android:defaultValue="2"
+            android:entries="@array/notification_entries"
+            android:entryValues="@array/notifications_values"
+            android:key="timeBetweenNotifications"
+            android:title="Time Between Notifications"
+            app:useSimpleSummaryProvider="true"/>
+    </PreferenceCategory>
 
 </PreferenceScreen>

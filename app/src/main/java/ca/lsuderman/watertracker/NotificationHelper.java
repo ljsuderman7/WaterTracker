@@ -38,7 +38,7 @@ public class NotificationHelper {
         final NotificationCompat.Builder drinkCupNotification = new NotificationCompat.Builder(context, CHANNEL_ID)
                 .setSmallIcon(R.drawable.ic_launcher_foreground)
                 .setContentTitle("Drink Water!")
-                .setContentText("It's time to drink your next cup of water")
+                .setContentText("It's time to drink some water")
                 .setContentIntent(pendingIntent)
                 .setAutoCancel(true);
 
