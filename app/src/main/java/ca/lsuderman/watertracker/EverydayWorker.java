@@ -36,8 +36,13 @@ public class EverydayWorker extends Worker {
     @NonNull
     @Override
     public Result doWork() {
-        addDailyResult();
-        resetCups();
+        boolean initialLoad = getInputData().getBoolean("initialLoad", false);
+        Log.d("initialLoad", String.valueOf(initialLoad));
+        if (!initialLoad) {
+            Log.d("initialLoad", String.valueOf(initialLoad));
+            addDailyResult();
+            resetCups();
+        }
         createNotificationWorker();
 
         return Result.success();
@@ -53,6 +58,7 @@ public class EverydayWorker extends Worker {
         } catch (Exception ex) {
             // no-op
         }
+
         if (lastCup.getIsDone()){
             try {
                 ((WaterDB) getApplicationContext()).addResult(yesterday, 1);
@@ -94,7 +100,7 @@ public class EverydayWorker extends Worker {
                             .setInitialDelay(timeBetweenNotifications, TimeUnit.HOURS)
                             .build();
             WorkManager.getInstance().enqueueUniquePeriodicWork("next_notification",
-                    ExistingPeriodicWorkPolicy.KEEP,
+                    ExistingPeriodicWorkPolicy.REPLACE,
                     request);
         }
     }

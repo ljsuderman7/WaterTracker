@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.preference.PreferenceManager;
+import androidx.work.Data;
 import androidx.work.ExistingPeriodicWorkPolicy;
 import androidx.work.OneTimeWorkRequest;
 import androidx.work.PeriodicWorkRequest;
@@ -51,6 +52,13 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        //TODO: -previous weeks results display at bottom of home page
+        //      -daily progress bar on home page
+        //      -graphs to track results
+        //      -different sized cups
+        //          -switch to ml per day, not just cups
+        //      -better UI
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
@@ -62,16 +70,41 @@ public class MainActivity extends AppCompatActivity {
 
         insertDummyData();
 
+        List<DailyResult> results = null;
+        try {
+            results = ((WaterDB) getApplication()).getAllResults();
+        } catch (Exception ex){
+            // no-op
+        }
+
+        // Creates a OneTimeWorkRequest the first time the app is opened
+        if (results.isEmpty()) {
+            Log.d("Results is Empty", String.valueOf(results.isEmpty()));
+            WorkRequest initialLoadRequest = new OneTimeWorkRequest.Builder(EverydayWorker.class)
+                    .setInputData(
+                            new Data.Builder()
+                                    .putBoolean("initialLoad", true)
+                                    .build()
+                    )
+                    .addTag("initial_load_request")
+                    .build();
+            WorkManager.getInstance().enqueue(initialLoadRequest);
+        }
+
         long delay = Utilities.getInitialDelay(2);
 
-        // Creates a PeriodicWorkRequest that will repeat everyday, and is initially delayed until 2AM
+        // Creates a PeriodicWorkRequest that will repeat everyday, with an initial delay until 2AM
         PeriodicWorkRequest request =
                 new PeriodicWorkRequest.Builder(EverydayWorker.class, 1, TimeUnit.DAYS)
-                        //.setInitialDelay(delay, TimeUnit.MILLISECONDS)
+                        .setInitialDelay(delay, TimeUnit.MILLISECONDS)
+                        .setInputData(
+                                new Data.Builder()
+                                        .putBoolean("initialLoad", false)
+                                        .build()
+                        )
                         .build();
 
-        // Puts request in the queue
-        WorkManager.getInstance().enqueueUniquePeriodicWork("reset_cups_periodic",
+        WorkManager.getInstance().enqueueUniquePeriodicWork("everyday_request",
                 ExistingPeriodicWorkPolicy.KEEP,
                 request);
 
@@ -230,14 +263,8 @@ public class MainActivity extends AppCompatActivity {
         txtDaysIncompleteLabel = findViewById(R.id.txtDaysIncompleteLabel);
         txtDrinkingHistoryLabel = findViewById(R.id.txtDrinkingHistoryLabel);
 
-        List<DailyResult> results = null;
-        try {
-            results = ((WaterDB) getApplication()).getAllResults();
-        } catch (Exception ex){
-            // no-op
-        }
         double completeDays = 0;
-        double incompleteDays = -1; //set to -1 to offset the initial load
+        double incompleteDays = 0;
         for (DailyResult result:  results) {
             if (result.getFinishedAllCups()){
                 completeDays++;
@@ -246,7 +273,7 @@ public class MainActivity extends AppCompatActivity {
             }
         }
 
-        if (results.size() > 1) {
+        if (results.size() > 0) {
             txtDaysCompleteLabel.setVisibility(View.VISIBLE);
             txtDaysIncompleteLabel.setVisibility(View.VISIBLE);
             txtDrinkingHistoryLabel.setVisibility(View.VISIBLE);
