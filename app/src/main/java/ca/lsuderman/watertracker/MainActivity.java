@@ -52,13 +52,6 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        //TODO: -previous weeks results display at bottom of home page
-        //      -daily progress bar on home page
-        //      -graphs to track results
-        //      -different sized cups
-        //          -switch to ml per day, not just cups
-        //      -better UI
-
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
@@ -69,6 +62,8 @@ public class MainActivity extends AppCompatActivity {
         }
 
         insertDummyData();
+
+        //region Work Requests
 
         List<DailyResult> results = null;
         try {
@@ -107,6 +102,8 @@ public class MainActivity extends AppCompatActivity {
         WorkManager.getInstance().enqueueUniquePeriodicWork("everyday_request",
                 ExistingPeriodicWorkPolicy.KEEP,
                 request);
+
+        //endregion
 
         //region Image Cup Buttons Setup
 
@@ -284,28 +281,8 @@ public class MainActivity extends AppCompatActivity {
             double totalDays = completeDays + incompleteDays;
             double completedPercentage = completeDays / totalDays;
             double displayPercentage = completedPercentage * 100;
-            String percentageText = "You've had the recommended amount of water " + (int) displayPercentage + "% of the time. ";
-
-            if (completedPercentage >= 0.90) {
-                percentageText += "Keep up the good work!";
-                txtPercentage.setTextColor(getResources().getColor(R.color.green));
-            } else if (completedPercentage >= 0.75) {
-                percentageText += "Good job but you can do a little better.";
-                txtPercentage.setTextColor(getResources().getColor(R.color.green));
-            } else if (completedPercentage >= 0.5) {
-                percentageText += "You can do better.";
-                txtPercentage.setTextColor(getResources().getColor(R.color.yellow));
-            } else if (completedPercentage >= 0.25) {
-                percentageText += "You can do a lot better.";
-                txtPercentage.setTextColor(getResources().getColor(R.color.orange));
-            } else {
-                percentageText += "You need to drink more water!";
-                txtPercentage.setTextColor(getResources().getColor(R.color.red));
-            }
-
-            txtPercentage.setText(percentageText);
+            txtPercentage.setText("You've had the recommended amount of water " + (int) displayPercentage + "% of the time.");
         }
-
 
         //endregion
     }

@@ -37,9 +37,7 @@ public class EverydayWorker extends Worker {
     @Override
     public Result doWork() {
         boolean initialLoad = getInputData().getBoolean("initialLoad", false);
-        Log.d("initialLoad", String.valueOf(initialLoad));
         if (!initialLoad) {
-            Log.d("initialLoad", String.valueOf(initialLoad));
             addDailyResult();
             resetCups();
         }
@@ -88,16 +86,12 @@ public class EverydayWorker extends Worker {
         int wakeUpTime = Integer.parseInt(sharedPreferences.getString("wakeUp", "8"));
         int timeBetweenNotifications = Integer.parseInt(sharedPreferences.getString("timeBetweenNotifications", "2"));
 
-//        int hoursAwake = bedtime - wakeUpTime;
-//        double timeBetweenCupsDouble = ((double)hoursAwake / 8) * 3600000;
-//        long timeBetweenCups = (long)timeBetweenCupsDouble;
-
-        long delay = Utilities.getInitialDelay(wakeUpTime);
+        long delay = Utilities.getInitialDelay(wakeUpTime + timeBetweenNotifications);
 
         if (timeBetweenNotifications != 0) {
             PeriodicWorkRequest request =
                     new PeriodicWorkRequest.Builder(NextCupNotificationWorker.class, timeBetweenNotifications, TimeUnit.HOURS)
-                            .setInitialDelay(timeBetweenNotifications, TimeUnit.HOURS)
+                            .setInitialDelay(delay, TimeUnit.HOURS)
                             .build();
             WorkManager.getInstance().enqueueUniquePeriodicWork("next_notification",
                     ExistingPeriodicWorkPolicy.REPLACE,
